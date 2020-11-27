@@ -2,7 +2,7 @@ from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTShadowClient
 import time
 import json
 import argparse
-import cert.AWS_conf as conf
+from  .cert.AWS_conf import AWS_conf as conf
 # Global variables
 UpdateCount = 10
 # Read in AWSconf
