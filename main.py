@@ -46,7 +46,7 @@ certificatePath = "cert/{}-certificate.pem.crt".format(thingName)
 privateKeyPath = "cert/{}-private.pem.key".format(thingName)
 port = conf.MQTT_PORT
 useWebsocket = conf.USE_WEBSOCKET
-clientId = conf.CLIENT_ID
+clientId = "Devicetest-Templatetest-{}".format(thingName)
 topic = conf.TOPIC
 # Global variables
 UpdateCount = 10
