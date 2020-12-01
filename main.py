@@ -48,7 +48,8 @@ port = conf.MQTT_PORT
 useWebsocket = conf.USE_WEBSOCKET
 clientId = conf.CLIENT_ID
 topic = conf.TOPIC
-
+# Global variables
+UpdateCount = 10
 # Demo Theater
 f = Figlet(font='slant')
 print(f.renderText('      F l e e t'))
