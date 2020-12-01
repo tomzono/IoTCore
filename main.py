@@ -27,6 +27,10 @@
 # ------------------------------------------------------------------------------
 import AWS_conf as conf
 import socket
+from AWSIoTPythonSDK.MQTTLib import AWSIoTMQTTShadowClient
+import time
+import json
+import argparse
 from provisioning_handler import ProvisioningHandler
 from utils.config_loader import Config
 from pyfiglet import Figlet
