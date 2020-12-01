@@ -25,10 +25,11 @@
 # Initial version - Raleigh Murch, AWS
 # email: murchral@amazon.com
 # ------------------------------------------------------------------------------
-
+import AWS_conf as conf
 from provisioning_handler import ProvisioningHandler
 from utils.config_loader import Config
 from pyfiglet import Figlet
+
 
 
 #Set Config path

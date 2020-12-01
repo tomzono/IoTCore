@@ -19,6 +19,7 @@ import os
 import socket
 import asyncio
 import glob
+import AWS_conf as conf
 
 
 class ProvisioningHandler:
