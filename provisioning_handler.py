@@ -1,10 +1,10 @@
 # ------------------------------------------------------------------------------
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: MIT-0 
+# SPDX-License-Identifier: MIT-0
 # ------------------------------------------------------------------------------
 # Demonstrates how to call/orchestrate AWS fleet provisioning services
 #  with a provided bootstrap certificate (aka - provisioning claim cert).
-#   
+#
 # Initial version - Raleigh Murch, AWS
 # email: murchral@amazon.com
 # ------------------------------------------------------------------------------
@@ -14,8 +14,9 @@ from awsiot import mqtt_connection_builder
 from utils.config_loader import Config
 import time
 import logging
-import json 
+import json
 import os
+import socket
 import asyncio
 import glob
 
@@ -24,38 +25,38 @@ class ProvisioningHandler:
 
     def __init__(self, file_path):
         """Initializes the provisioning handler
-        
+
         Arguments:
             file_path {string} -- path to your configuration file
         """
         #Logging
         logging.basicConfig(level=logging.ERROR)
         self.logger = logging.getLogger(__name__)
-        
+
         #Load configuration settings from config.ini
         config = Config(file_path)
         self.config_parameters = config.get_section('SETTINGS')
         self.secure_cert_path = self.config_parameters['SECURE_CERT_PATH']
-        self.iot_endpoint = self.config_parameters['IOT_ENDPOINT']	
+        self.iot_endpoint = self.config_parameters['IOT_ENDPOINT']
         self.template_name = self.config_parameters['PRODUCTION_TEMPLATE']
         self.rotation_template = self.config_parameters['CERT_ROTATION_TEMPLATE']
         self.claim_cert = self.config_parameters['CLAIM_CERT']
         self.secure_key = self.config_parameters['SECURE_KEY']
         self.root_cert = self.config_parameters['ROOT_CERT']
-    
-        # Sample Provisioning Template requests a serial number as a 
+
+        # Sample Provisioning Template requests a serial number as a
         # seed to generate Thing names in IoTCore. Simulating here.
         #self.unique_id = str(int(round(time.time() * 1000)))
-        self.unique_id = "1234567-abcde-fghij-klmno-1234567abc-TLS350" 
+        self.unique_id = socket.gethostname() 
 
         # ------------------------------------------------------------------------------
         #  -- PROVISIONING HOOKS EXAMPLE --
         # Provisioning Hooks are a powerful feature for fleet provisioning. Most of the
         # heavy lifting is performed within the cloud lambda. However, you can send
         # device attributes to be validated by the lambda. An example is shown in the line
-        # below (.hasValidAccount could be checked in the cloud against a database). 
+        # below (.hasValidAccount could be checked in the cloud against a database).
         # Alternatively, a serial number, geo-location, or any attribute could be sent.
-        # 
+        #
         # -- Note: This attribute is passed up as part of the register_thing method and
         # will be validated in your lambda's event data.
         # ------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ class ProvisioningHandler:
 
     def core_connect(self):
         """ Method used to connect to AWS IoTCore Service. Endpoint collected from config.
-        
+
         """
         if self.isRotation:
             self.logger.info('##### CONNECTING WITH EXISTING CERT #####')
@@ -94,7 +95,7 @@ class ProvisioningHandler:
             client_id=self.unique_id,
             clean_session=False,
             keep_alive_secs=6)
-        
+
         print("Connecting to {} with client ID '{}'...".format(self.iot_endpoint, self.unique_id))
         connect_future = self.primary_MQTTClient.connect()
         # Future.result() waits until a result is available
@@ -121,7 +122,7 @@ class ProvisioningHandler:
         #Get the current key
         if len(non_bootstrap_key) > 0:
             self.secure_key = os.path.basename(non_bootstrap_key[0])
-        
+
 
     def enable_error_monitor(self):
         """ Subscribe to pertinent IoTCore topics that would emit errors
@@ -129,7 +130,7 @@ class ProvisioningHandler:
 
         template_reject_topic = "$aws/provisioning-templates/{}/provision/json/rejected".format(self.template_name)
         certificate_reject_topic = "$aws/certificates/create/json/rejected"
-        
+
         template_accepted_topic = "$aws/provisioning-templates/{}/provision/json/accepted".format(self.template_name)
         certificate_accepted_topic = "$aws/certificates/create/json/accepted"
 
@@ -186,18 +187,18 @@ class ProvisioningHandler:
 
     def on_message_callback(self, payload):
         """ Callback Message handler responsible for workflow routing of msg responses from provisioning services.
-        
+
         Arguments:
             payload {bytes} -- The response message payload.
         """
         json_data = json.loads(payload)
-        
-        # A response has been recieved from the service that contains certificate data. 
+
+        # A response has been recieved from the service that contains certificate data.
         if 'certificateId' in json_data:
             self.logger.info('##### SUCCESS. SAVING KEYS TO DEVICE! #####')
             print('##### SUCCESS. SAVING KEYS TO DEVICE! #####')
             self.assemble_certificates(json_data)
-        
+
         # A response contains acknowledgement that the provisioning template has been acted upon.
         elif 'deviceConfiguration' in json_data:
             if self.isRotation:
@@ -217,14 +218,14 @@ class ProvisioningHandler:
     def assemble_certificates(self, payload):
         """ Method takes the payload and constructs/saves the certificate and private key. Method uses
         existing AWS IoT Core naming convention.
-        
+
         Arguments:
             payload {string} -- Certifiable certificate/key data.
 
         Returns:
             ownership_token {string} -- proof of ownership from certificate issuance activity.
         """
-        ### Cert ID 
+        ### Cert ID
         cert_id = payload['certificateId']
         self.new_key_root = cert_id[0:10]
 
@@ -233,7 +234,7 @@ class ProvisioningHandler:
         f = open('{}/{}'.format(self.secure_cert_path, self.new_cert_name), 'w+')
         f.write(payload['certificatePem'])
         f.close()
-        
+
 
         ### Create private key
         self.new_key_name = '{}-private.pem.key'.format(self.new_key_root)
@@ -243,19 +244,19 @@ class ProvisioningHandler:
 
         ### Extract/return Ownership token
         self.ownership_token = payload['certificateOwnershipToken']
-        
+
         # Register newly aquired cert
         self.register_thing(self.unique_id, self.ownership_token)
-        
+
 
 
     def register_thing(self, serial, token):
         """Calls the fleet provisioning service responsible for acting upon instructions within device templates.
-        
+
         Arguments:
             serial {string} -- unique identifer for the thing. Specified as a property in provisioning template.
             token {string} -- The token response from certificate creation to prove ownership/immediate possession of the certs.
-            
+
         Triggers:
             on_message_callback() - providing acknowledgement that the provisioning template was processed.
         """
@@ -265,9 +266,9 @@ class ProvisioningHandler:
         else:
             self.logger.info('##### CREATING THING ACTIVATING CERT #####')
             print('##### CREATING THING ACTIVATING CERT #####')
-                
+
         register_template = {"certificateOwnershipToken": token, "parameters": {"SerialNumber": serial}}
-        
+
         #Register thing / activate certificate
         self.primary_MQTTClient.publish(
             topic="$aws/provisioning-templates/{}/provision/json".format(self.template_name),
@@ -299,7 +300,7 @@ class ProvisioningHandler:
             client_id=self.unique_id + "-Prod",
             clean_session=False,
             keep_alive_secs=6)
-        
+
         print("Connecting with Prod certs to {} with client ID '{}'...".format(self.iot_endpoint, self.unique_id + "-Prod"))
         connect_future = self.test_MQTTClient.connect()
         # Future.result() waits until a result is available
@@ -339,5 +340,3 @@ class ProvisioningHandler:
             topic="openworld",
             payload=json.dumps({"service_response": "##### RESPONSE FROM PREVIOUSLY FORBIDDEN TOPIC #####"}),
             qos=mqtt.QoS.AT_LEAST_ONCE)
-
-
