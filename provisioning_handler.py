@@ -195,6 +195,7 @@ class ProvisioningHandler:
         elif 'service_response' in json_data:
             print('##### SUCCESSFULLY USED PROD CERTIFICATES #####')
         else:
+            print("")
 
     def assemble_certificates(self, payload):
         """ Method takes the payload and constructs/saves the certificate and private key. Method uses
