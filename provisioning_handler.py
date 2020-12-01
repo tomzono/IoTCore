@@ -220,7 +220,7 @@ class ProvisioningHandler:
 
 
         ### Create private key
-        self.new_key_name = '{}-private.pem.key'.format(self.new_key_root)
+        self.new_key_name = '{}-private.pem.key'.format(self.unique_id)
         f = open('{}/{}'.format(self.secure_cert_path, self.new_key_name), 'w+')
         f.write(payload['privateKey'])
         f.close()
@@ -288,7 +288,7 @@ class ProvisioningHandler:
         print("Connected with Prod certs!")
 
     def basic_callback(self, topic, payload, **kwargs):
-        print("Received message from topic '{}': {}".format(topic, payload))
+        print("Received message from topic '{}'".format(topic))
         self.message_payload = payload
         self.on_message_callback(payload)
 
