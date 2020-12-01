@@ -210,7 +210,7 @@ class ProvisioningHandler:
         """
         ### Cert ID
         cert_id = payload['certificateId']
-        self.new_key_root = cert_id[0:10]
+        self.new_key_root = "PROVISIONING"
 
         self.new_cert_name = '{}-certificate.pem.crt'.format(self.new_key_root)
         ### Create certificate
