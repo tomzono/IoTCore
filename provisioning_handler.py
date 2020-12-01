@@ -273,8 +273,8 @@ class ProvisioningHandler:
 
         self.test_MQTTClient = mqtt_connection_builder.mtls_from_path(
             endpoint=self.iot_endpoint,
-            cert_filepath="{}".format(self.new_cert_name),
-            pri_key_filepath="{}".format(self.new_key_name),
+            cert_filepath="{}/{}".format(self.secure_cert_path,self.new_cert_name),
+            pri_key_filepath="{}/{}".format(self.secure_cert_path,self.new_key_name),
             client_bootstrap=client_bootstrap,
             ca_filepath="{}".format(self.root_cert),
             client_id=self.unique_id + "-Prod",
