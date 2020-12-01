@@ -25,6 +25,7 @@ import AWS_conf as conf
 class ProvisioningHandler:
 
     def __init__(self):
+        self.secure_cert_path = "/home/pi/workspace/fukuzono_WorkSpace/AWS_IoTCore_Test/IoTCore/cert"
         self.iot_endpoint = conf.ENDPOINT
         self.template_name = "Devicetest-Template"
         self.rotation_template = "cert_rotation"
@@ -72,10 +73,10 @@ class ProvisioningHandler:
 
         self.primary_MQTTClient = mqtt_connection_builder.mtls_from_path(
             endpoint=self.iot_endpoint,
-            cert_filepath="{}/{}".format(self.secure_cert_path, self.claim_cert),
-            pri_key_filepath="{}/{}".format(self.secure_cert_path, self.secure_key),
+            cert_filepath="{}".format(self.claim_cert),
+            pri_key_filepath="{}".format(self.secure_key),
             client_bootstrap=client_bootstrap,
-            ca_filepath="{}/{}".format(self.secure_cert_path, self.root_cert),
+            ca_filepath="{}".format(self.root_cert),
             on_connection_interrupted=self.on_connection_interrupted,
             on_connection_resumed=self.on_connection_resumed,
             client_id=self.unique_id,
@@ -272,10 +273,10 @@ class ProvisioningHandler:
 
         self.test_MQTTClient = mqtt_connection_builder.mtls_from_path(
             endpoint=self.iot_endpoint,
-            cert_filepath="{}/{}".format(self.secure_cert_path, self.new_cert_name),
-            pri_key_filepath="{}/{}".format(self.secure_cert_path, self.new_key_name),
+            cert_filepath="{}".format(self.new_cert_name),
+            pri_key_filepath="{}".format(self.new_key_name),
             client_bootstrap=client_bootstrap,
-            ca_filepath="{}/{}".format(self.secure_cert_path, self.root_cert),
+            ca_filepath="{}".format(self.root_cert),
             client_id=self.unique_id + "-Prod",
             clean_session=False,
             keep_alive_secs=6)
