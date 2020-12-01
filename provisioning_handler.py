@@ -61,11 +61,9 @@ class ProvisioningHandler:
 
         """
         if self.isRotation:
-            self.logger.info('##### CONNECTING WITH EXISTING CERT #####')
             print('##### CONNECTING WITH EXISTING CERT #####')
             self.get_current_certs()
         else:
-            self.logger.info('##### CONNECTING WITH PROVISIONING CLAIM CERT #####')
             print('##### CONNECTING WITH PROVISIONING CLAIM CERT #####')
 
         event_loop_group = io.EventLoopGroup(1)
@@ -183,25 +181,20 @@ class ProvisioningHandler:
 
         # A response has been recieved from the service that contains certificate data.
         if 'certificateId' in json_data:
-            self.logger.info('##### SUCCESS. SAVING KEYS TO DEVICE! #####')
             print('##### SUCCESS. SAVING KEYS TO DEVICE! #####')
             self.assemble_certificates(json_data)
 
         # A response contains acknowledgement that the provisioning template has been acted upon.
         elif 'deviceConfiguration' in json_data:
             if self.isRotation:
-                self.logger.info('##### ACTIVATION COMPLETE #####')
                 print('##### ACTIVATION COMPLETE #####')
             else:
-                self.logger.info('##### CERT ACTIVATED AND THING {} CREATED #####'.format(json_data['thingName']))
                 print('##### CERT ACTIVATED AND THING {} CREATED #####'.format(json_data['thingName']))
 
             self.validate_certs()
         elif 'service_response' in json_data:
-            self.logger.info(json_data)
             print('##### SUCCESSFULLY USED PROD CERTIFICATES #####')
         else:
-            self.logger.info(json_data)
 
     def assemble_certificates(self, payload):
         """ Method takes the payload and constructs/saves the certificate and private key. Method uses
@@ -249,10 +242,8 @@ class ProvisioningHandler:
             on_message_callback() - providing acknowledgement that the provisioning template was processed.
         """
         if self.isRotation:
-            self.logger.info('##### VALIDATING EXPIRY & ACTIVATING CERT #####')
             print('##### VALIDATING EXPIRY & ACTIVATING CERT #####')
         else:
-            self.logger.info('##### CREATING THING ACTIVATING CERT #####')
             print('##### CREATING THING ACTIVATING CERT #####')
 
         register_template = {"certificateOwnershipToken": token, "parameters": {"SerialNumber": serial}}
@@ -267,7 +258,6 @@ class ProvisioningHandler:
     def validate_certs(self):
         """Responsible for (re)connecting to IoTCore with the newly provisioned/activated certificate - (first class citizen cert)
         """
-        self.logger.info('##### CONNECTING WITH OFFICIAL CERT #####')
         print('##### CONNECTING WITH OFFICIAL CERT #####')
         self.cert_validation_test()
         self.new_cert_pub_sub()
