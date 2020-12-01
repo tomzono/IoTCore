@@ -128,7 +128,7 @@ if __name__ == "__main__":
     myAWSIoTMQTTShadowClient.configureMQTTOperationTimeout(5)  # 5 sec
     # Connect to AWS IoT
     # Create a deviceShadow with persistent subscription
-    deviceShadowHandler = myAWSIoTMQTTShadowClient.createShadowHandlerWithName(thingName, True)
+    deviceShadowHandler = myAWSIoTMQTTShadowClient.createShadowHandlerWithName(clientId, True)
     myAWSIoTMQTTShadowClient.connect()
 
     # UpdateShadow & MessageSend in a loop
