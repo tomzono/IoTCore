@@ -1,18 +1,18 @@
 # ------------------------------------------------------------------------------
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: MIT-0 
+# SPDX-License-Identifier: MIT-0
 # -----------------------------------------
 # Consuming sample, demonstrating how a device process would leverage the provisioning class.
 #  The handler makes use of the asycio library and therefore requires Python 3.7.
 #
-#  Prereq's: 
+#  Prereq's:
 #      1) A provisioning claim certificate has been cut from AWSIoT.
 #	   2) A restrictive "birth" policy has been associated with the certificate.
 #      3) A provisioning template was created to manage the activities to be performed during new certificate activation.
 #	   4) The claim certificate was placed securely on the device fleet and shipped to the field. (along with root/ca and private key)
-#  
+#
 #  Execution:
-#      1) The paths to the certificates, and names of IoTCore endpoint and provisioning template are set in config.ini (this project)  
+#      1) The paths to the certificates, and names of IoTCore endpoint and provisioning template are set in config.ini (this project)
 #	   2) A device boots up and encounters it's "first run" experience and executes the process (main) below.
 # 	   3) The process instatiates a handler that uses the bootstrap certificate to connect to IoTCore.
 #	   4) The connection only enables calls to the Foundry provisioning services, where a new certificate is requested.
@@ -32,12 +32,7 @@ from pyfiglet import Figlet
 
 
 #Set Config path
-CONFIG_PATH = 'config.ini'
-
-config = Config(CONFIG_PATH)
-config_parameters = config.get_section('SETTINGS')
-secure_cert_path = config_parameters['SECURE_CERT_PATH']
-bootstrap_cert = config_parameters['CLAIM_CERT']
+bootstrap_cert = conf.PATH_TO_CERT
 
 # Demo Theater
 f = Figlet(font='slant')
@@ -52,20 +47,20 @@ def callback(payload):
 # Used to kick off the provisioning lifecycle, exchanging the bootstrap cert for a
 # production certificate after being validated by a provisioning hook lambda.
 #
-# isRotation = True is used to rotate from one production certificate to a new production certificate. 
+# isRotation = True is used to rotate from one production certificate to a new production certificate.
 # Certificates signed by AWS IoT Root CA expire on 12/31/2049. Security best practices
 # urge frequent rotation of x.509 certificates and this method (used in conjunction with
 # a cloud cert management pattern) attempts to make cert exchange easy.
 def run_provisioning(isRotation):
 
-    provisioner = ProvisioningHandler(CONFIG_PATH)
+    provisioner = ProvisioningHandler()
 
     if isRotation:
-        provisioner.get_official_certs(callback, isRotation=True)  
+        provisioner.get_official_certs(callback, isRotation=True)
     else:
-        #Check for availability of bootstrap cert 
+        #Check for availability of bootstrap cert
         try:
-             with open("{}/{}".format(secure_cert_path, bootstrap_cert)) as f:
+             with open("{}".format(bootstrap_cert)) as f:
                 # Call super-method to perform aquisition/activation
                 # of certs, creation of thing, etc. Returns general
                 # purpose callback at this point.
@@ -77,8 +72,3 @@ def run_provisioning(isRotation):
 
 if __name__ == "__main__":
     run_provisioning(isRotation=False)
-
-    
-
-		
-	

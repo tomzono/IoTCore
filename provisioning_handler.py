@@ -23,31 +23,18 @@ import glob
 
 class ProvisioningHandler:
 
-    def __init__(self, file_path):
-        """Initializes the provisioning handler
-
-        Arguments:
-            file_path {string} -- path to your configuration file
-        """
-        #Logging
-        logging.basicConfig(level=logging.ERROR)
-        self.logger = logging.getLogger(__name__)
-
-        #Load configuration settings from config.ini
-        config = Config(file_path)
-        self.config_parameters = config.get_section('SETTINGS')
-        self.secure_cert_path = self.config_parameters['SECURE_CERT_PATH']
-        self.iot_endpoint = self.config_parameters['IOT_ENDPOINT']
-        self.template_name = self.config_parameters['PRODUCTION_TEMPLATE']
-        self.rotation_template = self.config_parameters['CERT_ROTATION_TEMPLATE']
-        self.claim_cert = self.config_parameters['CLAIM_CERT']
-        self.secure_key = self.config_parameters['SECURE_KEY']
-        self.root_cert = self.config_parameters['ROOT_CERT']
+    def __init__(self):
+        self.iot_endpoint = conf.ENDPOINT
+        self.template_name = "Devicetest-Template"
+        self.rotation_template = "cert_rotation"
+        self.claim_cert = conf.PATH_TO_CERT
+        self.secure_key = conf.PATH_TO_KEY
+        self.root_cert = conf.PATH_TO_ROOT
 
         # Sample Provisioning Template requests a serial number as a
         # seed to generate Thing names in IoTCore. Simulating here.
         #self.unique_id = str(int(round(time.time() * 1000)))
-        self.unique_id = socket.gethostname() 
+        self.unique_id = socket.gethostname()
 
         # ------------------------------------------------------------------------------
         #  -- PROVISIONING HOOKS EXAMPLE --
