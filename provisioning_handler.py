@@ -25,7 +25,7 @@ import AWS_conf as conf
 class ProvisioningHandler:
 
     def __init__(self):
-        self.secure_cert_path = "/home/pi/workspace/fukuzono_WorkSpace/AWS_IoTCore_Test/IoTCore/cert"
+        self.secure_cert_path = "./cert"
         self.iot_endpoint = conf.ENDPOINT
         self.template_name = "Devicetest-Template"
         self.rotation_template = "cert_rotation"
