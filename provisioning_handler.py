@@ -25,17 +25,13 @@ import AWS_conf as conf
 class ProvisioningHandler:
 
     def __init__(self):
-        self.secure_cert_path = "./cert"
+        self.secure_cert_path = conf.CERT_FOLDER_PATH
         self.iot_endpoint = conf.ENDPOINT
-        self.template_name = "Devicetest-Template"
-        self.rotation_template = "cert_rotation"
+        self.template_name = conf.PROVISIONING_TEMPLATE
+        self.rotation_template = conf.CERT_ROTATION_TEMPRATE
         self.claim_cert = conf.PATH_TO_CERT
         self.secure_key = conf.PATH_TO_KEY
         self.root_cert = conf.PATH_TO_ROOT
-
-        # Sample Provisioning Template requests a serial number as a
-        # seed to generate Thing names in IoTCore. Simulating here.
-        #self.unique_id = str(int(round(time.time() * 1000)))
         self.unique_id = socket.gethostname()
 
         # ------------------------------------------------------------------------------
