@@ -93,7 +93,7 @@ def customShadowCallback_Get(payload, responseStatus, token):
         print("get request " + token + " time out!")
     if responseStatus == "accepted":
         payloadDict = json.loads(payload)
-        print ("getShadow:{}").format(payloadDict)
+        print ("getShadow:{}".format(payloadDict))
         UpdateCount = payloadDict["state"]["desired"]["UpdateCount"]
         print("~~~~~~~~~~~~~~~~~~~~~~~")
         print("Get request with token: " + token + " accepted!")
