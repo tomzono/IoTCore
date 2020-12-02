@@ -46,7 +46,7 @@ certificatePath = "cert/{}-certificate.pem.crt".format(thingName)
 privateKeyPath = "cert/{}-private.pem.key".format(thingName)
 port = conf.MQTT_PORT
 useWebsocket = conf.USE_WEBSOCKET
-clientId = "Devicetest-Templatetest-{}".format(thingName)
+clientId = "Devicetest-Template{}".format(thingName)
 topic = conf.TOPIC
 # Global variables
 UpdateCount = 10
@@ -131,6 +131,7 @@ if __name__ == "__main__":
     # Create a deviceShadow with persistent subscription
     deviceShadowHandler = myAWSIoTMQTTShadowClient.createShadowHandlerWithName(clientId, True)
     myAWSIoTMQTTShadowClient.connect()
+
 
     # UpdateShadow & MessageSend in a loop
     loopCount = 0
