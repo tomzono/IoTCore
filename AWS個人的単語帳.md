@@ -60,6 +60,9 @@ CPU またはメモリの最小利用可能量に基づいてタスクを配置�
 
  - Spread  
 指定された値に基づいてタスクを均等に配置します。有効な値は instanceId (または同じ効果を持つ host)、または attribute:ecs.availability-zone などのコンテナインスタンスに適用される任意のプラットフォームまたはカスタム属性です。サービスタスクはそのサービスからのタスクに基づいて分散されます。スタンドアロンタスクは、同じタスクグループからのタスクに基づいて分散されます。
+
+ - ### Dockerコンテナのポートマッピング
+ Amazon ECS で Docker コンテナを実行するためにはタスク定義を行います。タスク定義は、タスクファミリー、IAM タスクロール、ネットワークモード、コンテナ定義、ボリューム、タスク配置の制約事項、起動タイプに分かれています。ファミリーとコンテナ定義はタスク定義に必須ですが、タスクロール、ネットワークモード、ボリューム、タスク配置の制約事項、起動タイプはオプション設定となります。
 ---
 ## Amazon ElastiCache
 - ### ElastiCache Memcached
@@ -121,7 +124,13 @@ MOCK統合では、API Gateway はリクエストをさらにバックエンド�
 - ### SAMの利用
 CloudFormationテンプレートを利用してLambda関数を利用したサーバーレスアプリケーションのインフラを構成するためには、CloudFormationテンプレートのAWS::Serverless Transformセクションにおいて、AWS SAMのバージョンを指定することが必要です。
 ---
+## AWS CloudFront
+- ### ビューアとCloudFront間のHTTPS通信設定
+開発者としてビューアとCloudFront間のHTTPS通信を設定するためには、「Redirect HTTP to HTTPS」または「HTTPS Only」を使用するようにビューアプロトコルポリシーを設定することが必要です。
+---
 ## AWS CloudTrail
+CloudTrail はAWS KMS 内でユーザーやロール、または AWS のサービスによって実行されたアクションを記録するサービスです。  
+CloudFrontディストリビューションに外部のドメイン名を使用している場合、1つ以上のキャッシュ動作のビューアープロトコルポリシー設定を変更して、 Redirect HTTP to HTTPSまたはHTTPS Onlyを設定することでHTTPS通信を利用できます。その際には、CloudFrontに対してAWS Certificate Manager（ACM）が提供する証明書を設定します。
 
 ---
 ## AWS Code Commit
